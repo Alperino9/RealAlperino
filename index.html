@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Süper Futbol Clicker</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        #game-container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        #ball {
+            width: 150px;
+            cursor: pointer;
+            transition: transform 0.1s;
+            user-select: none;
+        }
+
+        #ball:active {
+            transform: scale(0.9);
+        }
+
+        .stats {
+            font-size: 24px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        .upgrade-btn {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: 0.3s;
+        }
+
+        .upgrade-btn:disabled {
+            background-color: #888;
+            cursor: not-allowed;
+        }
+
+        .upgrade-btn:hover:not(:disabled) {
+            background-color: #45a049;
+            transform: translateY(-2px);
+        }
+
+        #particle-container {
+            position: absolute;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <h1>⚽ Gol Kralı Clicker</h1>
+        <div class="stats">Skor: <span id="score">0</span></div>
+        <div class="stats" style="font-size: 18px;">Saniyelik Kazanç: <span id="per-second">0</span></div>
+        
+        <div id="ball" onclick="clickBall()" style="font-size: 100px;">⚽</div>
+
+        <div style="margin-top: 30px;">
+            <button id="upgradeBtn" class="upgrade-btn" onclick="buyUpgrade()">
+                Antrenör Tut (Maliyet: 10 Puan)
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let score = 0;
+        let autoClickers = 0;
+        let upgradeCost = 10;
+
+        const scoreDisplay = document.getElementById('score');
+        const perSecondDisplay = document.getElementById('per-second');
+        const upgradeBtn = document.getElementById('upgradeBtn');
+
+        // Topa tıklama fonksiyonu
+        function clickBall() {
+            score++;
+            updateDisplay();
+            createParticle();
+        }
+
+        // Geliştirme satın alma
+        function buyUpgrade() {
+            if (score >= upgradeCost) {
+                score -= upgradeCost;
+                autoClickers++;
+                upgradeCost = Math.round(upgradeCost * 1.5);
+                updateDisplay();
+            }
+        }
+
+        // Ekranı güncelleme
+        function updateDisplay() {
+            scoreDisplay.innerText = Math.floor(score);
+            perSecondDisplay.innerText = autoClickers;
+            upgradeBtn.innerText = `Antrenör Tut (Maliyet: ${upgradeCost} Puan)`;
+            
+            if (score < upgradeCost) {
+                upgradeBtn.disabled = true;
+            } else {
+                upgradeBtn.disabled = false;
+            }
+        }
+
+        // Otomatik puan artışı (Saniyede bir)
+        setInterval(() => {
+            if (autoClickers > 0) {
+                score += autoClickers;
+                updateDisplay();
+            }
+        }, 1000);
+
+        // Küçük bir görsel efekt
+        function createParticle() {
+            const ball = document.getElementById('ball');
+            ball.style.transform = "scale(1.1)";
+            setTimeout(() => ball.style.transform = "scale(1)", 100);
+        }
+
+        // Başlangıçta butonu kontrol et
+        updateDisplay();
+    </script>
+</body>
+</html>
